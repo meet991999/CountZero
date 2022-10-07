@@ -17,7 +17,7 @@ def creating_dict():
 
 
 try:
-    if os.stat("data/words_to_learn.csv").st_size <= 2:
+    if os.stat("data/words_to_learn.csv").st_size < os.stat("data/french_words.csv").st_size:
         creating_dict()
         data = pandas.DataFrame(learning)
         data.to_csv("data/words_to_learn.csv", index=False)
@@ -31,18 +31,11 @@ else:
     print(to_learn)
 
 
-def copy_list():
-    global to_learn
-    to_learn = [i for i in learning]
-    print(to_learn)
-    print(learning)
-
-
 def next_card():
     global to_learn, current_card, flip_timer
     window.after_cancel(flip_timer)
     if len(to_learn) == 0:
-        copy_list()
+        to_learn = [i for i in learning]
     current_card = random.choice(to_learn)
     canvas.itemconfig(card_title, text="French", fill="black")
     canvas.itemconfig(card_word, text=current_card["French"], fill="black")
