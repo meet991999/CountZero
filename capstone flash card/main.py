@@ -1,3 +1,4 @@
+import os
 from tkinter import *
 import pandas
 import random
@@ -5,21 +6,43 @@ import random
 
 BACKGROUND_COLOR = "#B1DDC6"
 current_card = {}
-to_learn = {}
+to_learn = []
+learning = []
+
+
+def creating_dict():
+    global learning
+    original_data1 = pandas.read_csv("data/french_words.csv")
+    learning = original_data1.to_dict(orient="records")
+
 
 try:
+    if os.stat("data/words_to_learn.csv").st_size <= 2:
+        creating_dict()
+        data = pandas.DataFrame(learning)
+        data.to_csv("data/words_to_learn.csv", index=False)
     data = pandas.read_csv("data/words_to_learn.csv")
+
 except FileNotFoundError:
-    original_data = pandas.read_csv("data/french_words.csv")
-    print(original_data)
-    to_learn = original_data.to_dict(orient="records")
+    creating_dict()
+
 else:
     to_learn = data.to_dict(orient="records")
+    print(to_learn)
+
+
+def copy_list():
+    global to_learn
+    to_learn = [i for i in learning]
+    print(to_learn)
+    print(learning)
 
 
 def next_card():
-    global current_card, flip_timer
+    global to_learn, current_card, flip_timer
     window.after_cancel(flip_timer)
+    if len(to_learn) == 0:
+        copy_list()
     current_card = random.choice(to_learn)
     canvas.itemconfig(card_title, text="French", fill="black")
     canvas.itemconfig(card_word, text=current_card["French"], fill="black")
@@ -34,10 +57,11 @@ def flip_card():
 
 
 def is_known():
+    global to_learn
     to_learn.remove(current_card)
     print(len(to_learn))
-    data = pandas.DataFrame(to_learn)
-    data.to_csv("data/words_to_learn.csv", index=False)
+    data1 = pandas.DataFrame(to_learn)
+    data1.to_csv("data/words_to_learn.csv", index=False)
     next_card()
 
 
@@ -66,8 +90,8 @@ known_button = Button(image=check_image, highlightthickness=0, command=is_known)
 known_button.grid(row=1, column=1)
 
 next_card()
-
 window.mainloop()
+
 
 
 
