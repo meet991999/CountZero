@@ -38,8 +38,10 @@ def next_card():
     if len(to_learn) == 0:
         x = tkinter.messagebox.askquestion(title=("continue?"),message="You have learned all words do you want to continue?")
         if x == "yes":
-            to_learn.extend(learning)
+            to_learn = list(learning)
+            # to_learn.extend(learning)
             # or to_learn = learning.copy()
+            
         else:
             exit()
     current_card = random.choice(to_learn)
