@@ -1,4 +1,5 @@
 import os
+import tkinter.messagebox
 from tkinter import *
 import pandas
 import random
@@ -35,7 +36,12 @@ def next_card():
     global to_learn, current_card, flip_timer
     window.after_cancel(flip_timer)
     if len(to_learn) == 0:
-        to_learn = [i for i in learning]
+        if len(to_learn) == 0:
+            x = tkinter.messagebox.askquestion(title=("continue?"),message="You have learned all words do you want to continue?")
+            if x == "yes":
+                to_learn = [i for i in learning]
+            else:
+                exit()
     current_card = random.choice(to_learn)
     canvas.itemconfig(card_title, text="French", fill="black")
     canvas.itemconfig(card_word, text=current_card["French"], fill="black")
